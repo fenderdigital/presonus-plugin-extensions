@@ -23,6 +23,7 @@
 #include "pluginterfaces/base/falignpush.h"
 
 struct wl_display;
+struct wl_surface;
 struct xdg_surface;
 struct xdg_toplevel;
 
@@ -40,10 +41,13 @@ namespace Presonus {
  * A plug-in does not connect to the system compositor, but connects to the host application by calling IWaylandHost::openWaylandConnection().
  * The IWaylandHost interface can be created via IHostApplication::createInstance.
  * As the interface may be required early, the host should pass IHostApplication to the plug-in using IPluginFactory3::setHostContext.
- * When opening a plug-in window, the host calls IPlugView::attached() with the parent pointer set to the wl_surface of the parent frame (with an unknown surface role).
- * The plug-in creates a wl_surface and must assign the wl_subsurface role using the given parent pointer. The plug-in is responsible for resizing the subsurface accordingly.
- * In order to create additional windows (dialogs, menus, tooltips etc.), the plug-in can use the IWaylandFrame interface, which is implemented by the host's IPlugFrame object.
- * The plug-in can use IWaylandFrame::getParentSurface() to query an xdg_surface, which can in turn be used as a parent in xdg_surface_get_popup.
+ * The plug-in must not perform blocking reads using functions like wl_display_roundtrip or wl_display_dispatch.
+ * Instead, the Steinberg::Linux::IRunLoop interface should be used to used to register an event handler using the file descriptor returned by wl_display_get_fd.
+ * 
+ * When opening a plug-in window, the host calls IPlugView::attached() with a null pointer.
+ * In order to create the frame surface and additional windows (dialogs, menus, tooltips etc.), the plug-in can use the IWaylandFrame interface, which is implemented by the host's IPlugFrame object.
+ * The plug-in creates a wl_surface and must assign the wl_subsurface role using the wl_surface pointer returned by IWaylandFrame::getWaylandSurface. The plug-in is responsible for resizing the subsurface accordingly.
+ * In order to create popup windows, the plug-in can use IWaylandFrame::getParentSurface() to query an xdg_surface, which can in turn be used as a parent in xdg_surface_get_popup.
  * Likewise, the plug-in can use IWaylandFrame::getParentToplevel() to query an xdg_toplevel, which can be used in xdg_toplevel_set_parent.
  */
 
@@ -51,7 +55,9 @@ namespace Presonus {
 // Platform UI Types
 //************************************************************************************************
 
-/** The parent parameter in IPlugView::attached() is a wl_surface pointer.
+/** The host application is a Wayland compositor.
+ * The parent parameter in IPlugView::attached() is a null pointer.
+ * The plug-in should query information about the host frame using the IWaylandFrame interface, which is implemented by the host's IPlugFrame object.
  * The plug-in should create a wl_surface and attach it to the parent surface as a wl_subsurface.
  * The plug-in should not connect to the system compositor to do so, but use IWaylandHost::openWaylandConnection().
  * @ingroup waylandFrame
@@ -88,6 +94,11 @@ DECLARE_CLASS_IID (IWaylandHost, 0x5E9582EE, 0x86594652, 0xB213678E, 0x7F1A705E)
 
 struct IWaylandFrame: Steinberg::FUnknown
 {
+	/** Get the parent Wayland surface.
+	 * The plug-in must not change the state of the parent surface.
+	 */
+	virtual wl_surface* PLUGIN_API getWaylandSurface (wl_display* display) = 0;
+
 	/** Get the parent XDG surface for creating popup windows.
 	 * If the parent surface is not an xdg_surface, 
 	 *   this returns the first xdg_surface that can be found in the surface hierarchy,
@@ -96,12 +107,12 @@ struct IWaylandFrame: Steinberg::FUnknown
 	 * The size and position of the parent surface, relative to the top left corner of 
 	 *   the plug-in surface, is returned in parentSize.
 	 */
-	virtual xdg_surface* PLUGIN_API getParentSurface (Steinberg::ViewRect& parentSize) = 0;
+	virtual xdg_surface* PLUGIN_API getParentSurface (Steinberg::ViewRect& parentSize, wl_display* display) = 0;
 
 	/** Get the XDG toplevel surface containing the plug-in frame.
 	 * The plug-in must not change the state of the returned xdg_toplevel. 
 	 */
-	virtual xdg_toplevel* PLUGIN_API getParentToplevel () = 0;
+	virtual xdg_toplevel* PLUGIN_API getParentToplevel (wl_display* display) = 0;
 	
 	static const Steinberg::FUID iid;
 };
