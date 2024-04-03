@@ -39,8 +39,7 @@ namespace Presonus {
  * A native Wayland host application is both a Wayland client and a Wayland compositor. 
  * The host application connects to the system compositor and creates application windows etc. using this compositor connection.
  * A plug-in does not connect to the system compositor, but connects to the host application by calling IWaylandHost::openWaylandConnection().
- * The IWaylandHost interface can be created via IHostApplication::createInstance.
- * As the interface may be required early, the host should pass IHostApplication to the plug-in using IPluginFactory3::setHostContext.
+ * The host application provides the IWaylandHost interface via IPluginFactory3::setHostContext. The plug-in may also query this interface using an IPlugFrame object.
  * The plug-in must not perform blocking reads using functions like wl_display_roundtrip or wl_display_dispatch.
  * Instead, the Steinberg::Linux::IRunLoop interface should be used to used to register an event handler using the file descriptor returned by wl_display_get_fd.
  * 
@@ -68,7 +67,6 @@ const Steinberg::FIDString kPlatformTypeWaylandSurfaceID = "WaylandSurfaceID"; /
 // IWaylandHost
 /** Wayland host interface.
 	Implemented as a singleton in the host application.
-	Created via IHostApplication::createInstance.
 	@ingroup waylandFrame */
 //************************************************************************************************
 
