@@ -40,8 +40,9 @@ namespace Presonus {
  * The host application connects to the system compositor and creates application windows etc. using this compositor connection.
  * A plug-in does not connect to the system compositor, but connects to the host application by calling IWaylandHost::openWaylandConnection().
  * The host application provides the IWaylandHost interface via IPluginFactory3::setHostContext. The plug-in may also query this interface using an IPlugFrame object.
- * The plug-in must not perform blocking reads using functions like wl_display_roundtrip or wl_display_dispatch.
- * Instead, the Steinberg::Linux::IRunLoop interface should be used to used to register an event handler using the file descriptor returned by wl_display_get_fd.
+ * The plug-in should avoid blocking the main thread by calling functions like wl_display_dispatch or wl_display_roundtrip.
+ * Instead, the Steinberg::Linux::IRunLoop interface should be used to register an event handler using the file descriptor returned by wl_display_get_fd.
+ * However, as it might not be feasible to avoid calling functions like wl_display_roundtrip in certain circumstances, the host application must ensure that polling the display file descriptor does not cause a deadlock.
  * 
  * When opening a plug-in window, the host calls IPlugView::attached() with a null pointer.
  * In order to create the frame surface and additional windows (dialogs, menus, tooltips etc.), the plug-in can use the IWaylandFrame interface, which is implemented by the host's IPlugFrame object.
