@@ -19,7 +19,7 @@ Studio One supports audio plug-ins in VST2, VST3 and Audio Unit format. These te
 
 Feel free to integrate these enhancements in your plug-in or adapt them for your host.
 
-[PreSonus Plug-in Extensions Documentation](https://github.com/fenderdigital/presonus-plugin-extensions/releases/latest/download/PluginExtension.pdf)
+[PreSonus Plug-in Extensions Documentation](https://github.com/fenderdigital/presonus-plugin-extensions/releases/latest/download/PluginExtensions.pdf)
 
 [Technical Note on System DPI Scaling for Plug-ins in Studio One](https://presonus.software/developer/technical-note-system-dpi-scaling.pdf)
 
