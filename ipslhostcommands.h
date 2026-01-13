@@ -72,7 +72,7 @@ struct IHostCommandHandler: Steinberg::FUnknown
 		Can be used for testing purpose, if the plug-in does not have its own context menu implementation
 		or if it wants to use the look & feel of the host menu. This method is not supposed
 		to support command lists implemented by the plug-in. */
-	virtual Steinberg::tresult PLUGIN_API popupCommandMenu (ICommandList* commandList, Steinberg::int32 xPos, Steinberg::int32 yPos, Steinberg::IPlugView* view = 0) = 0;
+	virtual Steinberg::tresult PLUGIN_API popupCommandMenu (ICommandList* commandList, Steinberg::int32 xPos, Steinberg::int32 yPos, Steinberg::IPlugView* view = nullptr) = 0;
 
 	static const Steinberg::FUID iid;
 };

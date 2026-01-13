@@ -68,6 +68,10 @@ const Steinberg::FIDString kPlatformTypeWaylandSurfaceID = "WaylandSurfaceID"; /
 // IWaylandHost
 /** Wayland host interface.
 	Implemented as a singleton in the host application.
+	
+	(Please note that there is now an ABI-compatible interface in the VST3 SDK v3.8.0
+	named Steinberg::IWaylandHost).
+	
 	@ingroup waylandFrame */
 //************************************************************************************************
 
@@ -88,6 +92,10 @@ DECLARE_CLASS_IID (IWaylandHost, 0x5E9582EE, 0x86594652, 0xB213678E, 0x7F1A705E)
 // IWaylandFrame
 /** Interface to query additional information about the host plug-in frame in a Wayland session.
 	To be implemented by the VST3 IPlugFrame class.
+	
+	(Please note that there is now an ABI-compatible interface in the VST3 SDK v3.8.0
+	named Steinberg::IWaylandFrame).
+	
 	@ingroup waylandFrame */
 //************************************************************************************************
 

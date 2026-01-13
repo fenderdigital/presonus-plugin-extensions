@@ -192,7 +192,7 @@ namespace ContextInfo
 	const Steinberg::FIDString kType = "type";						///< (R) channel type (int32, see ChannelType enumeration)
 	const Steinberg::FIDString kMain = "main";						///< (R) channel is main output (int32, 0: false, 1: true)
 	const Steinberg::FIDString kIndex = "index";					///< (R) channel index (int32, starts at zero)
-	const Steinberg::FIDString kColor = "color";					///< (R/W) channel color (int32: RGBA, starts with red value in lowest byte)
+	const Steinberg::FIDString kColor = "color";					///< (R/W) channel color (uint32, ABGR, red value in lowest byte, independent of endianness)
 	const Steinberg::FIDString kVisibility = "visibility";			///< (R) channel visibility (int32, 0: false, 1: true)
 	const Steinberg::FIDString kSelected = "selected";				///< (R/W) selection state, channel is selected exlusively and scrolled into view on write (int32, 0: false, 1: true)
 	const Steinberg::FIDString kMultiSelect = "multiselect";		///< (W) select channel without unselecting others (int32, 0: false, 1: true)
@@ -218,6 +218,12 @@ namespace ContextInfo
 	const Steinberg::FIDString kDocumentFolder = "documentFolder";		///< (R) document folder (string)	
 	const Steinberg::FIDString kAudioFolder = "audioFolder";			///< (R) folder for audio files (string)
 	const Steinberg::FIDString kIndexMode = "indexMode";				///< (R) channel index mode (default is flat, see ChannelIndexMode enumeration) 
+	
+	// color components
+	inline Steinberg::uint8 GetRed (Steinberg::uint32 color) { return Steinberg::uint8(color & 0xFF); }
+	inline Steinberg::uint8 GetGreen (Steinberg::uint32 color) { return Steinberg::uint8((color >> 8) & 0xFF); }
+	inline Steinberg::uint8 GetBlue (Steinberg::uint32 color) { return Steinberg::uint8((color >> 16) & 0xFF); }
+	inline Steinberg::uint8 GetAlpha (Steinberg::uint32 color) { return Steinberg::uint8((color >> 24) & 0xFF); }
 }
 
 } // namespace Presonus

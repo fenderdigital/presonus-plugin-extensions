@@ -20,11 +20,12 @@
 #define _ipsleditcontroller_h
 
 #include "pluginterfaces/vst/vsttypes.h"
-#include "pluginterfaces/base/funknown.h"
+#include "pluginterfaces/base/fvariant.h"
 #include "pluginterfaces/base/falignpush.h"
 
 namespace Steinberg {
 namespace Vst {
+class IAttributeList;
 class IEditController; }}
 
 namespace Presonus {
