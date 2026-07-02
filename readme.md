@@ -16,6 +16,7 @@ Studio One supports audio plug-ins in VST2, VST3 and Audio Unit format. These te
 - Support for direct plug-in view renderering to render targets (Studio One 6.5 and later)
 - Support for native Wayland plug-in views (Studio One 6.6 and later)
 - Query supported speaker arrangements from plug-ins (Studio One 6.6 and later)
+- New Media Content Provider plug-in type (browser integration in Studio One 7 / Studio Pro 8 and later)
 
 Feel free to integrate these enhancements in your plug-in or adapt them for your host.
 
