@@ -34,7 +34,7 @@ namespace Presonus {
 	
 	The host might not be able to report all available attributes at all times. Please check the
 	return value of getContextInfoValue() and getContextInfoString(). It's not required to implement
-	IContextInfoHandler on the plug-in side, but we recommend to do so. The host will then call 
+	IContextInfoHandler on the plug-in side, but we recommend doing so. The host will then call
 	notifyContextInfoChange() during initialization to inform the plug-in about the initial state of
 	the available attributes.
 	
@@ -65,7 +65,7 @@ struct IContextInfoProvider: Steinberg::FUnknown
 	/** Get context information by identifier. */
 	virtual Steinberg::tresult PLUGIN_API getContextInfoString (Steinberg::Vst::TChar* string, Steinberg::int32 maxCharCount, Steinberg::FIDString id) = 0;
 	
-    static const Steinberg::FUID iid;
+	static const Steinberg::FUID iid;
 };
 
 DECLARE_CLASS_IID (IContextInfoProvider, 0x483e61ea, 0x17994494, 0x8199a35a, 0xebb35e3c)
@@ -74,7 +74,7 @@ DECLARE_CLASS_IID (IContextInfoProvider, 0x483e61ea, 0x17994494, 0x8199a35a, 0xe
 // IContextInfoProvider2
 /**	Extension to IContextInfoProvider enabling the plug-in to modify host context information.
 
-	Values like volume or pan support both, numeric and string representation for get and set.
+	Values like volume or pan support both numeric and string representations for get and set.
 
 	@ingroup contextInfo */
 //************************************************************************************************
@@ -105,17 +105,17 @@ DECLARE_CLASS_IID (IContextInfoProvider2, 0x61e45968, 0x3d364f39, 0xb15e1733, 0x
 /**	Extension to IContextInfoProvider and IContextInfoProvider2.
 
 	Enable the plug-in to signal begin and end of editing for context information values. 
-	Use IComponentHandler2::startGroupEdit() and IComponentHandler2::endGroupEdit() to signal group edits. 
+	Use IComponentHandler2::startGroupEdit() and IComponentHandler2::finishGroupEdit() to signal group edits.
 	
 	@ingroup contextInfo */
 //************************************************************************************************
 
 struct IContextInfoProvider3: IContextInfoProvider2
 {
-	/** Begin edit of context info value, \see also IComponentHandler::beginEdit. */
+	/** Begin edit of context info value, see IComponentHandler::beginEdit. */
 	virtual Steinberg::tresult PLUGIN_API beginEditContextInfoValue (Steinberg::FIDString id) = 0;
 
-	/** End edit of context info value, \see also IComponentHandler::endEdit. */
+	/** End edit of context info value, see IComponentHandler::endEdit. */
 	virtual Steinberg::tresult PLUGIN_API endEditContextInfoValue (Steinberg::FIDString id) = 0;
 	
     static const Steinberg::FUID iid;
@@ -154,7 +154,7 @@ DECLARE_CLASS_IID (IContextInfoHandler, 0xc3b17bc0, 0x2c174494, 0x80293402, 0xfb
 struct IContextInfoHandler2: Steinberg::FUnknown
 {
 	/**	Called by the host if context information has changed. 
-		The identifier (id) is empty for the inital update. */
+		The identifier (id) is empty for the initial update. */
 	virtual void PLUGIN_API notifyContextInfoChange (Steinberg::FIDString id) = 0;
   
 	static const Steinberg::FUID iid;
@@ -166,6 +166,9 @@ DECLARE_CLASS_IID (IContextInfoHandler2, 0x31e29a7a, 0xe55043ad, 0x8b95b9b8, 0xd
 // Context Information Attributes
 //************************************************************************************************
 
+/** Context information attribute identifiers, see IContextInfoProvider.
+	(R) = readable, (W) = writable (via IContextInfoProvider2), (R/W) = both.
+	Change notifications for kVolume to kMaxSendLevel require IContextInfoHandler2 on the plug-in side. */
 namespace ContextInfo
 {
 	/** Channel types. */
@@ -183,7 +186,7 @@ namespace ContextInfo
 	enum ChannelIndexMode
 	{
 		kFlatIndex = 0,	///< channel indices are contiguous (example: track 1, track 2, bus 3, bus 4)
-		kPerTypeIndex	///< channel indices restarts at zero for each type (example: track 1, track 2, bus 1, bus 2)
+		kPerTypeIndex	///< channel indices restart at zero for each type (example: track 1, track 2, bus 1, bus 2)
 	};
 
 	// per instance
@@ -194,7 +197,7 @@ namespace ContextInfo
 	const Steinberg::FIDString kIndex = "index";					///< (R) channel index (int32, starts at zero)
 	const Steinberg::FIDString kColor = "color";					///< (R/W) channel color (uint32, ABGR, red value in lowest byte, independent of endianness)
 	const Steinberg::FIDString kVisibility = "visibility";			///< (R) channel visibility (int32, 0: false, 1: true)
-	const Steinberg::FIDString kSelected = "selected";				///< (R/W) selection state, channel is selected exlusively and scrolled into view on write (int32, 0: false, 1: true)
+	const Steinberg::FIDString kSelected = "selected";				///< (R/W) selection state, channel is selected exclusively and scrolled into view on write (int32, 0: false, 1: true)
 	const Steinberg::FIDString kMultiSelect = "multiselect";		///< (W) select channel without unselecting others (int32, 0: false, 1: true)
 	const Steinberg::FIDString kFocused = "focused";				///< (R) focus for user input when multiple channels are selected (int32, 0: false, 1: true)
 
@@ -220,9 +223,13 @@ namespace ContextInfo
 	const Steinberg::FIDString kIndexMode = "indexMode";				///< (R) channel index mode (default is flat, see ChannelIndexMode enumeration) 
 	
 	// color components
+	/** Get the red component of a kColor value. */
 	inline Steinberg::uint8 GetRed (Steinberg::uint32 color) { return Steinberg::uint8(color & 0xFF); }
+	/** Get the green component of a kColor value. */
 	inline Steinberg::uint8 GetGreen (Steinberg::uint32 color) { return Steinberg::uint8((color >> 8) & 0xFF); }
+	/** Get the blue component of a kColor value. */
 	inline Steinberg::uint8 GetBlue (Steinberg::uint32 color) { return Steinberg::uint8((color >> 16) & 0xFF); }
+	/** Get the alpha component of a kColor value. */
 	inline Steinberg::uint8 GetAlpha (Steinberg::uint32 color) { return Steinberg::uint8((color >> 24) & 0xFF); }
 }
 

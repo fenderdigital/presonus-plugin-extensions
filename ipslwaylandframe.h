@@ -34,7 +34,7 @@ namespace Presonus {
 
 /** \defgroup waylandFrame Wayland Frame
  *
- * The following interfaces allow to query information about the host plug-in frame when running in a Wayland session.
+ * The following interfaces allow querying information about the host plug-in frame when running in a Wayland session.
  * 
  * A native Wayland host application is both a Wayland client and a Wayland compositor. 
  * The host application connects to the system compositor and creates application windows etc. using this compositor connection.
@@ -55,14 +55,14 @@ namespace Presonus {
 // Platform UI Types
 //************************************************************************************************
 
-/** The host application is a Wayland compositor.
+/** Wayland Surface ID: the host application is a Wayland compositor.
  * The parent parameter in IPlugView::attached() is a null pointer.
  * The plug-in should query information about the host frame using the IWaylandFrame interface, which is implemented by the host's IPlugFrame object.
  * The plug-in should create a wl_surface and attach it to the parent surface as a wl_subsurface.
  * The plug-in should not connect to the system compositor to do so, but use IWaylandHost::openWaylandConnection().
  * @ingroup waylandFrame
  */
-const Steinberg::FIDString kPlatformTypeWaylandSurfaceID = "WaylandSurfaceID"; ///< Wayland Surface ID.
+const Steinberg::FIDString kPlatformTypeWaylandSurfaceID = "WaylandSurfaceID";
 
 //************************************************************************************************
 // IWaylandHost

@@ -27,7 +27,7 @@ namespace Presonus {
 
 /** \defgroup soundVariations Sound Variations 
 
-The following interfaces allow to report available sound variations of a synth.
+The following interfaces allow reporting available sound variations of a synth.
  
 Sound Variations are alterations of a loaded sound - also known as articulations. 
 Usually they are realized as sample layers and often enabled with a key switch note.
@@ -39,8 +39,8 @@ The main purpose of this interface extension is to
 
 Overview:
 - The main entry point for this feature is ISoundVariationController provided by the plug-in. 
-- For each unit the plug-in provides a ISoundVariationInfo (addressed via bus and channel index).
-- The host will can query variations via ISoundVariationInfo::getVariationList. 
+- For each unit the plug-in provides an ISoundVariationInfo (addressed via bus and channel index).
+- The host can query variations via ISoundVariationInfo::getVariationList. 
 - The plug-in must report changes to the list with ISoundVariationObserver::onSoundVariationsChanged
 - The host will activate variations either by sending the reported sound activation sequence or using a special Event (optional - if the plug-in supports this)
 */
@@ -63,21 +63,21 @@ struct SoundActivationSequenceItem
 { 
 	enum ItemTypes
 	{
-	/** Note event: Host should send a note-on followed by note off. 
+	/** Note event (uses note): Host should send a note-on followed by note off. 
 	  * The note off is either ignored in the plug-in or it terminates momentary sound variations. */
-		kNoteEvent         = 0, ///< is Note
+		kNoteEvent         = 0,
 	
-	/**  Single note-on event. */
-		kNoteOnEvent       = 1,			///< is Note
+	/**  Single note-on event (uses note). */
+		kNoteOnEvent       = 1,
 		
-	/**  Single note-off event. */
-		kNoteOffEvent      = 2,			///< is Note 
+	/**  Single note-off event (uses note). */
+		kNoteOffEvent      = 2,
 		
-	/** Controller event */
-		kControlEvent      = 3,			///< is Controller
+	/** Controller event (uses controller). */
+		kControlEvent      = 3,
 
-	/** Program change */
-		kProgramChange     = 4			///< is ProgramChange
+	/** Program change (uses programChange). */
+		kProgramChange     = 4
 	};
 
 	struct Note
@@ -109,7 +109,7 @@ struct SoundActivationSequenceItem
 		{}
 	}; 
 
-	int type;
+	int type;	///< item type, see ItemTypes
 	union 
 	{ 
 		Note note;
@@ -155,7 +155,7 @@ struct SoundActivationSequence
 			items[count++] = item;	
 	}
 
-	/** Add a note event (@see SoundActivationSequenceItem)  */
+	/** Add a note event (see SoundActivationSequenceItem::Note). */
 	void addNote (const SoundActivationSequenceItem::Note& note, int type = SoundActivationSequenceItem::kNoteEvent)
 	{
 		if(count < kMaxItems)
@@ -191,7 +191,7 @@ struct SoundActivationSequence
 // ScoreSymbolList
 /** Score Symbol List.    
 	Combination of notation symbols associated with a sound variation. Plug-in can suggest a unique
-	score symbol comination that should trigger the variation. 
+	score symbol combination that should trigger the variation. 
 
 	@ingroup soundVariations */
 //************************************************************************************************
@@ -225,10 +225,10 @@ struct ScoreSymbolList
 struct SoundVariationData
 {				
 	/** Each variation needs an id which must be unique in the reported list. 
-        This ID is used to address variations. It can be implemented as a simple counter as long as it meets the following rules
+        This ID is used to address variations. It can be implemented as a simple counter as long as it meets the following rules:
 		  - The id must be the same each time the sound variations are queried.
 		  - The id must be the same each time a sound is loaded.
-		  - If the synth gui allows to move or edit a variation, the ids of all reported variations must not change.
+		  - If the synth GUI allows moving or editing a variation, the ids of all reported variations must not change.
  	    
 		The id will be stored with trigger events of host documents. 
 		They are also used to transmit sound variation activation requests via Vst3SoundVariationEvent / Vst2SoundVariationEvent */
@@ -245,13 +245,13 @@ struct SoundVariationData
 
 	Steinberg::Vst::ColorSpec color; ///< optional - set to 0 if not provided
 	Pitch triggerPitch;              ///< optional - synth can suggest a default key switch, set to -1 if not provided. If the variation is triggered with a simple key switch, set the triggerPitch accordingly
-	ScoreSymbolList scoreSymbols;    ///< optional - @see ScoreSymbolList
-	Steinberg::int32 flags;          ///< optional - @see Flags
+	ScoreSymbolList scoreSymbols;    ///< optional, see ScoreSymbolList
+	Steinberg::int32 flags;          ///< optional, see Flags
 
 	enum Flags
 	{
 	/** Previous sound variation is re-enabled when this variation terminates. 
-	  * Activation sequence can only be a note (with length) - and / or kTerminateTypeId must be supported */
+	  * Activation sequence can only be a note (with length) - and / or Vst3SoundVariationEvent::kTerminateTypeId / Vst2SoundVariationEvent::kTerminateTypeId must be supported */
 		kIsMomentary = 1 << 0,
 	
 	/** Main or default variation which is active on loading the sound preset. 
@@ -265,7 +265,7 @@ struct SoundVariationData
 //************************************************************************************************
 // SoundVariationFolderData
 /** Sound Variation Folder. 
-	Used with ISoundVariationList::begin folder to report nested variations 
+	Used with ISoundVariationList::beginFolder to report nested variations.
 
 	@ingroup soundVariations */
 //************************************************************************************************
@@ -275,10 +275,10 @@ struct SoundVariationFolderData
 	/** Displayed name of the folder */
 	Steinberg::Vst::String128 title; 
 
-	/** Color - opional (set to 0 if not available) */
+	/** Color - optional (set to 0 if not available) */
 	Steinberg::Vst::ColorSpec color; 
 
-	Steinberg::int32 flags;          ///< optional - @see Flags
+	Steinberg::int32 flags;          ///< optional, see Flags
 
 	enum Flags
 	{
@@ -323,13 +323,13 @@ struct ISoundVariationList
 	/** Append variation to the list. This can be done on top-level or inside folders. */	
 	virtual void PLUGIN_API addVariation (const SoundVariationData& var) = 0;
 
-	/** Optional. Begin an new folder. All following sound variation will be added to the current folder. */
+	/** Begin a new folder (optional). All following sound variations will be added to the current folder. */
 	virtual void PLUGIN_API beginFolder (const SoundVariationFolderData& folderData) = 0;
 	
 	/** Each started folder needs to be closed again. */
 	virtual void PLUGIN_API endFolder () = 0;
 	
-	/** Tell the host which sound preset the reported variations belong to. \see SoundVariationPresetInfo */
+	/** Tell the host which sound preset the reported variations belong to (see SoundVariationPresetInfo). */
 	virtual void PLUGIN_API setPresetInfo (const SoundVariationPresetInfo& info) = 0;
 };
 
@@ -347,20 +347,20 @@ struct ISoundVariationObserver
 	enum ChangeMessage
 	{
 		/** Notify the host that a new sound preset was loaded. 
-		  * The host should call ISoundVariationInfo::getVariationList and discard any cached variation data.	*/
-		kPresetChanged = 0,         
+		  * The host should call ISoundVariationInfo::getVariationList and discard any cached variation data. */
+		kPresetChanged = 0,
 
-		/** Notify the host that the variation list of a loaded sound preset have been edited. 
-		  * The host should call ISoundVariationInfo::getVariationList to retrieve modifications of the variation list. 
-		  * Cached variation data should be adjusted. */		
-		kVariationListModified = 1, 
-		                            
-		/** Notify the host that the active variation has changed. 
+		/** Notify the host that the variation list of a loaded sound preset has been edited.
+		  * The host should call ISoundVariationInfo::getVariationList to retrieve modifications of the variation list.
+		  * Cached variation data should be adjusted. */
+		kVariationListModified = 1,
+
+		/** Notify the host that the active variation has changed.
 		  * The host should call ISoundVariationInfo::getActiveVariation in return. */
 		kActiveVariationChanged = 2
 	};
 
-	/** Notify the host that the sound variation info has changed. 
+	/** Notify the host that the sound variation info has changed.
 	    This method should be called in the main thread if possible.
 	    \param changeMessage is one value of enum ChangeMessage. */
 	virtual void PLUGIN_API onSoundVariationsChanged (Steinberg::int32 changeMessage) = 0;
@@ -380,7 +380,7 @@ struct ISoundVariationInfo: Steinberg::FUnknown
 	  * The plug-in should store the pointer and report the cases defined by ISoundVariationObserver::ChangeMessage to the host */
 	virtual Steinberg::tresult PLUGIN_API setVariationObserver (ISoundVariationObserver* handler) = 0;
 	
-	/** Get the current sound variations. The plug-in should fill the given varition list.
+	/** Get the current sound variations. The plug-in should fill the given variation list.
 	  *  \return kResultTrue on success */
 	virtual Steinberg::tresult PLUGIN_API getVariationList (ISoundVariationList& list) = 0;
 
@@ -409,16 +409,16 @@ struct ISoundVariationController: Steinberg::FUnknown
 
 	// optional:
 
-	/** Return true if the plug-in can handle events of type Vst3SoundVariationEvent / Vst2SoundVariationEvent */
+	/** Return true if the plug-in can handle events of type Vst3SoundVariationEvent / Vst2SoundVariationEvent (optional). */
 	virtual Steinberg::TBool PLUGIN_API isSoundVariationEventSupported () = 0;
 
-	/** Return true if the plug-in supports disableKeySwitches */
+	/** Return true if the plug-in supports disableKeySwitches (optional). */
 	virtual Steinberg::TBool PLUGIN_API isDisableKeySwitchesSupported () = 0;
 
-	/** Enable a mode that ignores all activation sequence events and only handle Vst3SoundVariationEvent / Vst2SoundVariationEvent */
+	/** Enable a mode that ignores all activation sequence events and only handles Vst3SoundVariationEvent / Vst2SoundVariationEvent (optional). */
 	virtual Steinberg::tresult PLUGIN_API disableKeySwitches (Steinberg::TBool state) = 0;
 	
-	/** Return true if the disableKeySwitches mode is active */
+	/** Return true if the disableKeySwitches mode is active (optional). */
 	virtual Steinberg::TBool PLUGIN_API areKeySwitchesDisabled () = 0;
 
 	static const Steinberg::FUID iid;
@@ -430,10 +430,10 @@ DECLARE_CLASS_IID (ISoundVariationController, 0x3abdfc3e, 0x4b964a66, 0xafcd86f1
 // Vst3SoundVariationEvent (VST3)
 /** Event sent to a synth in order to activate a sound variation.
 	Events of this type are sent only if ISoundVariationController::isSoundVariationEventSupported returns true.
-	A Steinberg::Vst::Event which has the type SoundVariationEvent::kTypeId must be reinterpret-casted to
-	Presonus::SoundVariationEvent and the according sound variation should be activated.
+	A Steinberg::Vst::Event which has the type Vst3SoundVariationEvent::kTypeId must be reinterpret-casted to
+	Presonus::Vst3SoundVariationEvent and the corresponding sound variation should be activated.
 
-	see also Steinberg::Vst::Event
+	See also Steinberg::Vst::Event
 	
 	@ingroup soundVariations */
 //************************************************************************************************
@@ -446,8 +446,8 @@ struct Vst3SoundVariationEvent
 	Steinberg::int32 busIndex;                  ///< event bus index
 	Steinberg::int32 sampleOffset;              ///< sample frames related to the current block start sample position
 	Steinberg::Vst::TQuarterNotes ppqPosition;  ///< position in project
-	Steinberg::uint16 flags;                    ///< combination of \ref EventFlags - and kTerminateMomentary
-	Steinberg::uint16 type;                     ///< Vst3SoundVariationEvent::kType
+	Steinberg::uint16 flags;                    ///< combination of Steinberg::Vst::Event::EventFlags
+	Steinberg::uint16 type;                     ///< Vst3SoundVariationEvent::kTypeId or Vst3SoundVariationEvent::kTerminateTypeId
 	Steinberg::int32 channel;                   ///< channel index in event bus (like NoteOnEvent)
 	VariationID variationId;                    ///< id of variation to be activated
 };
@@ -460,22 +460,28 @@ struct Vst3SoundVariationEvent
 	Host call looks like this:
 	
 	@code
-		if(effect->dispatch (effect, effCanDo, 0, 0, (void*)Presonus::PlugCanDos::canDoGetSoundVariationController) == 1)
+		void* canDo = (void*)Presonus::PlugCanDos::canDoGetSoundVariationController;
+		if(effect->dispatcher (effect, effCanDo, 0, 0, canDo, 0) == 1)
 		{
-			Presonus::ISoundVariationController* soundVariationController = 0; 
-			effect->dispatcher (effect, effVendorSpecific, Presonus::kVendorID, Presonus::kGetSoundVariationController, &soundVariationController)); 
+			Presonus::ISoundVariationController* soundVariationController = 0;
+			effect->dispatcher (effect, effVendorSpecific, Presonus::kVendorID,
+				Presonus::kGetSoundVariationController, &soundVariationController, 0);
 			// ...
 		}
 	@endcode	
 
-	Plug-In side looks like this:
+	Plug-in side looks like this:
 
 	@code
-		VstIntPtr MySynth::dispatcher (VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)
+		VstIntPtr MySynth::dispatcher (VstInt32 opcode, VstInt32 index, VstIntPtr value,
+			void* ptr, float opt)
 		{
-			if(opcode == effVendorSpecific && index == Presonus::kVendorID && value == Presonus::kGetSoundVariationController)
+			if(opcode == effVendorSpecific && index == Presonus::kVendorID
+				&& value == Presonus::kGetSoundVariationController)
 			{
-				Presonus::ISoundVariationController** result = (Presonus::ISoundVariationController**)ptr;
+				Presonus::ISoundVariationController** result =
+					(Presonus::ISoundVariationController**)ptr;
+				// soundVariationController is a member of MySynth
 				if(soundVariationController == 0)
 					soundVariationController = new SoundVariationController;
 		
@@ -493,13 +499,13 @@ static const int kGetSoundVariationController = 'GSVC';
 
 namespace PlugCanDos
 {
-	/** Check if plug-in can provide a ISoundVariationController. */
+	/** Check if plug-in can provide an ISoundVariationController. */
 	static const char* canDoGetSoundVariationController = "getSoundVariationController";
 }
 
 //************************************************************************************************
 // Vst2SoundVariationEvent
-/** VST2 Sound Activation Event.
+/** VST2 Sound Variation Event.
 	Event sent to a synth in order to activate a sound variation. 
 	See also VstEvent 
 
@@ -514,7 +520,7 @@ struct Vst2SoundVariationEvent
 	Steinberg::int32 type;        ///< Vst2SoundVariationEvent::kTypeId or Vst2SoundVariationEvent::kTerminateTypeId
 	Steinberg::int32 byteSize;    ///< sizeof(Vst2SoundVariationEvent) - 2 * sizeof(VstInt32);
 	Steinberg::int32 deltaFrames; ///< sample frames related to the current block start sample position
-	Steinberg::int32 flags;       ///< @see VstMidiEventFlags
+	Steinberg::int32 flags;       ///< combination of VstMidiEventFlags
 	Steinberg::int32 channel;     ///< MIDI channel
 	VariationID variationId;      ///< id of variation to be activated	
 };
@@ -543,7 +549,7 @@ struct SymbolID
 	static const ScoreSymbolID kForceSFFP         = 'sffp';
 	static const ScoreSymbolID kMezzoStaccato             = 'mzsc'; ///< kStaccato | kTenuto
 	static const ScoreSymbolID kAccentTenuto              = 'actn'; ///< kAccent | kTenuto
-	static const ScoreSymbolID kAccentStaccato            = 'acst'; ///< kAccent | kStaccato,
+	static const ScoreSymbolID kAccentStaccato            = 'acst'; ///< kAccent | kStaccato
 	static const ScoreSymbolID kAccentStaccatissimo       = 'acso'; ///< kAccent | kStaccatissimo
 	static const ScoreSymbolID kStrongAccentTenuto        = 'mrtn'; ///< kStrongAccent | kTenuto
 	static const ScoreSymbolID kStrongAccentStaccato      = 'mrst'; ///< kStrongAccent | kStaccato
@@ -564,7 +570,7 @@ struct SymbolID
 	static const ScoreSymbolID kTrillWholetone    = 'trWT'; 
 	static const ScoreSymbolID kVibrato           = 'vibr'; 
 	static const ScoreSymbolID kWideVibrato       = 'wvib';
-	static const ScoreSymbolID kCircle            = 'circ'; ///< o meaning depends on instrument: open / harmonic (flageolett)
+	static const ScoreSymbolID kCircle            = 'circ'; ///< o meaning depends on instrument: open / harmonic (flageolet)
 	static const ScoreSymbolID kPlus              = 'plus'; ///< + (closed)					 
 	static const ScoreSymbolID kLaissezVibrer     = 'lvib'; ///< l.v.
 	static const ScoreSymbolID kConSordino        = 'sord'; ///< Con Sordino https://en.wikipedia.org/wiki/Mute_(music)
@@ -572,7 +578,7 @@ struct SymbolID
 	static const ScoreSymbolID kArco              = 'arco';
 	static const ScoreSymbolID kPizzicato         = 'pizz';
 	static const ScoreSymbolID kColLegno          = 'legn'; ///< "mit dem Holz" - reverted bow
-	static const ScoreSymbolID kSulPonticello     = 'pont'; ///< "am steg"
+	static const ScoreSymbolID kSulPonticello     = 'pont'; ///< "am Steg"
     static const ScoreSymbolID kSulTasto          = 'tast'; ///< flautando "nahe am Griffbrett"
 	static const ScoreSymbolID kBehindBridge      = 'bhnd'; 
 	static const ScoreSymbolID kDownBow           = 'dnbw';

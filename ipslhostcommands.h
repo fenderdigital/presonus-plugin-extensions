@@ -41,7 +41,7 @@ struct ICommandList;
 	Please note that the intention of this set of interfaces is not to allow a generic menu
 	implementation. This is the responsibility of a GUI toolkit. It basically provides
 	a way to enumerate and execute commands anonymously, i.e. the plug-in does not have to
-	know the exact sematics of the commands and the host does not break the consistency of
+	know the exact semantics of the commands and the host does not break the consistency of
 	the plug-in GUI.
 
 	Usage Example:
@@ -68,8 +68,8 @@ struct IHostCommandHandler: Steinberg::FUnknown
 	virtual ICommandList* PLUGIN_API createParamCommands (Steinberg::Vst::ParamID tag) = 0;
 
 	/** Helper to popup a command menu at given position.
-		Coordinates are relative to view or in screen coordintes if view is null.
-		Can be used for testing purpose, if the plug-in does not have its own context menu implementation
+		Coordinates are relative to view or in screen coordinates if view is null.
+		Can be used for testing purposes, if the plug-in does not have its own context menu implementation
 		or if it wants to use the look & feel of the host menu. This method is not supposed
 		to support command lists implemented by the plug-in. */
 	virtual Steinberg::tresult PLUGIN_API popupCommandMenu (ICommandList* commandList, Steinberg::int32 xPos, Steinberg::int32 yPos, Steinberg::IPlugView* view = nullptr) = 0;

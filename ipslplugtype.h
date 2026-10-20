@@ -19,7 +19,7 @@
 #ifndef _ipslplugtype_h
 #define _ipslplugtype_h
 
-/** Plug-In Category "Media Content Provider".
+/** Plug-in Category "Media Content Provider".
 
 A plug-in of this kind is added to the application's media browser if it has a registered plug-in class ID. 
 
@@ -33,12 +33,12 @@ A plug-in of this kind is added to the application's media browser if it has a r
 
 - There will be one instance per document. This is to make sure that there is always a one-to-one relation between document and plug-in.
   - A plug-in instance will be created automatically when a document is created or loaded. Initially it will be inactive. setActive / setProcessing are not called.    
-  - If the user opens the according browser tab, the plug-in will be activated (setActive (true), setProcessing (true) and the edit view is created.
+  - If the user opens the corresponding browser tab, the plug-in will be activated (setActive (true), setProcessing (true)) and the edit view is created.
   - If the user opens another tab or closes the browser, the plug-in will be deactivated (setActive (false), setProcessing (false)). 
 	Also the edit view is removed as if you would close the normal instrument editor window.  
   - The plug-in instance has the same lifecycle as a document. Closing a document will destroy the plug-in instance.
 
-- The plug-in GUI is supposed to be sizable to fit into the browser
+- The plug-in GUI is supposed to be sizable to fit into the browser.
 
 - The application stores the latest state of the plug-in in a default preset file which is used when a new document is created. 
   This is optional and is only performed if the plug-in is marked dirty. It is marked dirty when it sends 

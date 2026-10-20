@@ -31,7 +31,7 @@ embedding its views as subview into the host, resizing from the host, high-DPI s
 - Resizing works like VST3's checkSizeConstraint() and onSize() methods, VST3's canResize()
 is defined via canDoViewResize.
 
-- For "DPI-aware" host applications on the Windows platform a similar mimic to the
+- For "DPI-aware" host applications on the Windows platform an equivalent of the
 Presonus::IPlugInViewScaling VST3 extended interface is defined here.
 
 - Gain reduction reporting corresponds to the Presonus::IGainReductionInfo VST3 interface.
@@ -84,19 +84,19 @@ enum Opcodes
 
 	/** The host can suggest a new editor size, and the plug-in can modify the suggested
 		size to a suitable value if it cannot resize to the given values.
-		The ptrArg is a ERect* to the input/output rect. This differs from the ERect**
+		The ptrArg is an ERect* to the input/output rect. This differs from the ERect**
 		used by effEditGetRect, because here the rect is owned by the host, not the plug-in.
 		The result is 0 on failure, 1 on success. */
 	kEffEditCheckSizeConstraints = 'AeCc',
 
 	/** The host can set a new size after negotiating the size via the above
 		kEffEditCheckSizeConstraints, triggering the actual resizing.
-		The ptrArg is a ERect* to the input/output rect. This differs from the ERect**
+		The ptrArg is an ERect* to the input/output rect. This differs from the ERect**
 		used by effEditGetRect, because here the rect is owned by the host, not the plug-in.
 		The result is 0 on failure, 1 on success. */
 	kEffEditSetRect = 'AeSr',
 
-	/** When the view is embedded, it may need to adjust its UI, e.g. by suppressing
+	/** When the view is embedded, it may need to adjust its UI, for example by suppressing
 		its built-in resizing facility because this is then controlled by the host.
 		The ptrArg is a VstInt32*, pointing to 0 to disable or to 1 to enable embedding.
 		Per default, embedding is disabled until the host calls this to indicate otherwise. */

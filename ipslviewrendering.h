@@ -31,13 +31,13 @@ namespace Presonus {
 	parent argument is null in this case. */
 const Steinberg::FIDString kPlatformTypePlugViewRendering = "IPlugViewRendering";
 
-/** Identifer for RGBA pixel format. */
+/** Identifier for RGBA pixel format. */
 constexpr Steinberg::int32 kPixelFormatRGBA = 'RGBA';
 
 /** Coordinate unit physical pixels. */
 constexpr Steinberg::int32 kCoordinateUnitPhysicalPixels = 0;
 
-/** Coordinate unit scalable points, i.e. pixels = points x scaling factor */
+/** Coordinate unit scalable points (pixels = points x scaling factor). */
 constexpr Steinberg::int32 kCoordinateUnitScalablePoints = 1;
 
 //************************************************************************************************
@@ -103,7 +103,7 @@ struct BitmapLockScope
 
 struct IPlugViewCoordinateUnitSupport: Steinberg::FUnknown
 {
-	/**	Check which coordinate unit is used by the plug-in view, i.e. kCoordinateUnitPhysicalPixels
+	/**	Check which coordinate unit is used by the plug-in view: kCoordinateUnitPhysicalPixels
 		or kCoordinateUnitScalablePoints. This decision affects all coordinates for rendering
 		(IPlugViewRendering and IPlugRenderingFrame) and mouse input (IPlugViewMouseInput). */
 	virtual Steinberg::int32 PLUGIN_API getCoordinateUnit () = 0;
@@ -115,13 +115,13 @@ DECLARE_CLASS_IID (IPlugViewCoordinateUnitSupport, 0xeae3ebb, 0xb301468a, 0xa127
 
 //************************************************************************************************
 // IPlugViewRendering
-/** Support for plug-in view renderering, to be implemented by the VST3 IPlugView class.
+/** Support for plug-in view rendering, to be implemented by the VST3 IPlugView class.
 	@ingroup viewExt */
 //************************************************************************************************
 
 struct IPlugViewRendering: Steinberg::FUnknown
 {
-	/** Check if given rendering type and format is supported.
+	/** Check if given rendering type and format are supported.
 		For bitmaps, this is IBitmapAccessor::iid and kPixelFormatRGBA. */
 	virtual Steinberg::tresult PLUGIN_API isRenderingTypeSupported (Steinberg::TUID type, Steinberg::int32 format) = 0;
 

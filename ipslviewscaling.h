@@ -34,7 +34,7 @@ namespace Presonus {
 	named Steinberg::IPlugViewContentScaleSupport).
 	
 	On Windows, if a process is "DPI-aware" and the system DPI setting is different from the default
-	value of 96 DPI, the application is responsible to scale the contents of its windows accordingly,
+	value of 96 DPI, the application is responsible for scaling the contents of its windows accordingly,
 	including child windows provided by 3rd party plug-ins.
 	
 	This interface is used by the host to inform the plug-in about the current scaling factor.
@@ -42,11 +42,11 @@ namespace Presonus {
 	to physical pixels on screen.
 	
 	The plug-in has to be prepared to deal with the following scaling factors:
-		
-	 96 DPI = 100% scaling (factor = 1.0)
-	120 DPI = 125% scaling (factor = 1.25)
-	144 DPI = 150% scaling (factor = 1.5)
-	192 DPI = 200% scaling (factor = 2.0)
+
+	-  96 DPI = 100% scaling (factor = 1.0)
+	- 120 DPI = 125% scaling (factor = 1.25)
+	- 144 DPI = 150% scaling (factor = 1.5)
+	- 192 DPI = 200% scaling (factor = 2.0)
 
 	On Windows 8.1 or later DPI settings are per monitor. The scaling factor for a window can change
 	when it is moved between screens.
@@ -68,7 +68,7 @@ DECLARE_CLASS_IID (IPlugInViewScaling, 0x65ed9690, 0x8ac44525, 0x8aadef7a, 0x72e
 
 //************************************************************************************************
 // IPlugInViewSystemScalingSupport
-/** The plug-in view supports system DPI scaling on Windows, i.e. it is prepared that the host
+/** The plug-in view supports system DPI scaling on Windows: it is prepared that the host
 	can change the DPI_AWARENESS_CONTEXT of the main thread.
 	
 	@ingroup viewExt */

@@ -27,8 +27,8 @@ namespace Presonus {
 
 /** @defgroup instrument Instrument Extensions 
 
-The following interfaces allow to support extended features of a synth plug-in.
--# Report Key Assignment. Used in the host to display the function and name of key on a musical keyboard
+The following interfaces allow a synth plug-in to support extended features.
+-# Report Key Assignment. Used in the host to display the function and name of a key on a musical keyboard
 -# Report which editor is used best with this instrument (Piano / Drum)
 -# Report or set the "Middle C" 
 */
@@ -42,7 +42,7 @@ The following interfaces allow to support extended features of a synth plug-in.
 struct KeyAssignment
 {				
 	Steinberg::int16 midiPitch;        ///< the pitch
-	Steinberg::int32 type;             ///< assignment type \see Type
+	Steinberg::int32 type;             ///< assignment type (see Type)
 	Steinberg::Vst::String128 title;   ///< optional
 	Steinberg::Vst::ColorSpec color;   ///< optional
 
@@ -50,7 +50,7 @@ struct KeyAssignment
 	{				
 		kSustainable = 0,  ///< sound starts with note on, ends with note off
 		kOneShot = 1,      ///< sound starts with note on, note off does not end it, sound always plays for a defined time
-		kFunction = 2      ///< the pitch is assingned to a function (like a keyswitch)		
+		kFunction = 2      ///< the pitch is assigned to a function (like a keyswitch)
 	};
 
 	KeyAssignment (Steinberg::int16 pitch, Type _type): midiPitch (pitch), type (_type), color (0) { title[0] = 0; }
@@ -58,7 +58,7 @@ struct KeyAssignment
 
 //************************************************************************************************
 // IKeyAssignmentReceiver
-/** Callback interface for retrieving key assignemtns
+/** Callback interface for retrieving key assignments.
 	The host implements this to retrieve key assignments from the plug-in.
 	
 	@ingroup instrument */
@@ -79,7 +79,7 @@ struct IKeyAssignmentReceiver
 
 struct IInstrumentObserver
 {
-	/** Values used for IInstrumentObserver::onInstrumentChanged */
+	/** Values used for IInstrumentObserver::onInstrumentInfoChanged */
 	enum ChangeMessage
 	{
 		/** Notify the host that key assignment info changed. 
@@ -115,7 +115,7 @@ struct IInstrumentController: Steinberg::FUnknown
 		kReportKeyAssignment = 1,    ///< getKeyAssignment is supported
 		kReportDrumInstrument = 2,   ///< isDrumInstrument is supported
 		kReportMiddleC = 3,          ///< middle C can be queried
-		kModifyMiddleC = 4           ///< middle C can be set via  setMiddleCValue 
+		kModifyMiddleC = 4           ///< middle C can be set via setMiddleCValue
 	};
 
 	/** Check if a certain instrument feature is supported. 
@@ -130,13 +130,13 @@ struct IInstrumentController: Steinberg::FUnknown
 	  *  \return kResultTrue on success */
 	virtual Steinberg::tresult PLUGIN_API getKeyAssignment (IKeyAssignmentReceiver& result, Steinberg::int32 busIndex, Steinberg::int16 channel) = 0;
 	
-	/** Suggest to use the drum editor for editing. */
+	/** Return true to suggest using the drum editor for this synth unit (busIndex + channel). */
 	virtual Steinberg::TBool PLUGIN_API isDrumInstrument (Steinberg::int32 busIndex, Steinberg::int16 channel) = 0;
 
-	/** Return the current middle C midi pitch. \return kResultTrue on success, kNotImplemented if not implemented, kResultFalse otherwise */
+	/** Return the current middle C MIDI pitch. \return kResultTrue on success, kNotImplemented if not implemented, kResultFalse otherwise */
 	virtual Steinberg::tresult PLUGIN_API getMiddleCValue (int& pitch) = 0;
 	
-	/** Set middle C midi pitch. \return kResultTrue on success, kNotImplemented if not implemented, kResultFalse otherwise */
+	/** Set middle C MIDI pitch. \return kResultTrue on success, kNotImplemented if not implemented, kResultFalse otherwise */
 	virtual Steinberg::tresult PLUGIN_API setMiddleCValue (int pitch) = 0;
 
 	static const Steinberg::FUID iid;

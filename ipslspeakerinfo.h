@@ -28,16 +28,16 @@ namespace Presonus {
 /** @defgroup speakerInfo Speaker Arrangement Support Info */
 
 //************************************************************************************************
-// ISpeakerArrangementInfo
-/**	Interface to query information about speaker arrangement support.	
-	- Implemented by plug-in as extension of Steinberg::Vst::IComponent 
-		
+// ISpeakerSupportInfo
+/**	Interface to query information about the plug-in's speaker arrangement support.
+	Implemented by the plug-in as extension of Steinberg::Vst::IComponent.
+
 	@ingroup speakerInfo */
 //************************************************************************************************
 
 struct ISpeakerSupportInfo: Steinberg::FUnknown
 {	
-	/** Report if the speaker arrangement is supported on the a specific bus */
+	/** Report if the speaker arrangement is supported on a specific bus. */
 	virtual Steinberg::TBool PLUGIN_API isArrangementSupportedOnBus (Steinberg::Vst::SpeakerArrangement arr, Steinberg::Vst::BusDirection dir, Steinberg::int32 index) = 0;
 
     static const Steinberg::FUID iid;
@@ -46,10 +46,10 @@ struct ISpeakerSupportInfo: Steinberg::FUnknown
 DECLARE_CLASS_IID (ISpeakerSupportInfo, 0x7342e0eb, 0x8f5641de, 0xa5f7c503, 0x8e2ec3ef)
 
 //************************************************************************************************
-// ISpeakerArrangementHostInfo
-/**	Interface to query information about speaker arrangement support.	
-	- Implemented by host as extension of Steinberg::Vst::IComponentHandler. 
-		
+// ISpeakerSupportHostInfo
+/**	Interface to query information about the host's speaker arrangement support.
+	Implemented by the host as extension of Steinberg::Vst::IComponentHandler.
+
 	@ingroup speakerInfo */
 //************************************************************************************************
 

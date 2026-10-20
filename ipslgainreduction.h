@@ -26,7 +26,7 @@ namespace Presonus {
 
 //************************************************************************************************
 // IGainReductionInfo
-/**	Interface to report gain reduction imposed to the audio signal by the plug-in to the
+/**	Interface to report gain reduction imposed on the audio signal by the plug-in to the
 	host for display in the UI. Implemented by the VST3 edit controller class. 
 
 	@ingroup editController */

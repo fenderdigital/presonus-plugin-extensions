@@ -58,7 +58,7 @@ enum SlaveMode
 
 //************************************************************************************************
 // IEditControllerExtra
-/**	Extension to Steinberg::Vst::IEditController with additonal flags and notifications
+/**	Extension to Steinberg::Vst::IEditController with additional flags and notifications
 	not available in the standard edit controller interface. 
 	
 	@ingroup editController	*/
